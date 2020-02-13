@@ -1,0 +1,121 @@
+---
+
+- name: Add "{{ os_group }}" group
+  group:
+    name: "{{ os_group }}"
+    state: present  
+  become: yes  
+
+- name: Add "{{ os_user }}" user with the home dir /home/{{ os_user }}/
+  user:
+    name: "{{ os_user }}"
+    group: "{{ os_group }}"
+    home: /home/{{ os_user }}/
+    shell: /bin/bash
+    comment: Phantom User
+  become: yes
+
+- name: Set /etc/security/limits.conf for "{{ os_user }}" user
+  template:
+    src: limits.conf.j2
+    dest: "/etc/security/limits.conf"
+  become: yes 
+
+- name: Create {{ phantom_home }} dir
+  file:
+    path: "{{ phantom_home }}"
+    state: directory
+    mode: 0755  
+    owner: "{{ os_user }}"
+    group: "{{ os_group }}"
+  become: yes
+
+- name: Install Splunk Phantom prereq packages
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - git
+    - libevent
+    - c-ares
+    - bind-utils
+    - java-1.8.0-openjdk-headless
+    - mailcap
+    - fontconfig
+    - ntpdate
+    - perl
+    - rsync
+    - xmlsec1
+    - xmlsec1-openssl
+    - libxslt
+    - ntp
+    - zip
+    - net-tools
+    - policycoreutils-python
+    - libxml2
+    - libcurl
+    - gnutls
+  become: yes  
+
+- name: Allow tcp/80 traffic through firewalld
+  firewalld:
+    service: http
+    permanent: yes
+    state: enabled
+  become: yes
+
+- name: Allow tcp/{{ phantom_https_port }} traffic through firewalld
+  firewalld:
+    port: "{{ phantom_https_port }}/tcp"
+    permanent: yes
+    state: enabled
+  become: yes  
+
+- name: Reload firewalld rules while maintaining session state (be nice to Ansible)   
+  command: 
+    cmd: firewall-cmd --reload
+  become: yes  
+
+- name: Check for the presence of /home/{{ os_user }}/{{ phantom_tgz }}
+  stat: 
+    path: /home/{{ os_user }}/{{ phantom_tgz }}
+    get_checksum: yes  
+    checksum_algorithm: sha256
+  register: phantom_tgz_downloaded_flag
+  become: yes
+
+- name: Copy files/{{ phantom_tgz }} (local) to /home/{{ os_user }}/ (remote)
+  copy:
+    src: "files/{{ phantom_tgz }}"
+    dest: /home/{{ os_user }}
+    mode: 0640
+    owner: "{{ os_user }}"
+    group: "{{ os_group }}"
+  become: yes
+  when: phantom_tgz_downloaded_flag.stat.exists == False
+
+- name: Extract {{ phantom_tgz }} to {{ phantom_home }}
+  unarchive:
+    src: /home/{{ os_user }}/{{ phantom_tgz }}
+    dest: "{{ phantom_home }}/"
+    remote_src: yes
+    owner: "{{ os_user }}"
+    group: "{{ os_group }}"
+  become: yes
+
+- name: Set {{ phantom_home }} owner & group recursively
+  file:
+    path: "{{ phantom_home }}"
+    state: directory
+    owner: "{{ os_user }}"
+    group: "{{ os_group }}"
+    recurse: yes
+  become: yes  
+
+- name: Install Phantom using the phantom_tar_install.sh script unless already installed
+  command:
+    chdir: "{{ phantom_home }}/"
+    cmd: "./phantom_tar_install.sh install --no-prompt --without-apps --https-port={{ phantom_https_port }}"
+    creates: "{{ phantom_home }}/var/log/phantom/phantom_install_log"
+  become: yes
+  become_user: "{{ os_user }}"

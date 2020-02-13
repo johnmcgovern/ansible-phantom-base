@@ -1,0 +1,71 @@
+
+#========================================
+# Ansible, OS, & Splunk Config Variables 
+#========================================
+
+#
+# Change These:
+# (Username / password type variables that should be changed)
+#
+
+# Remote host username, password, enable password, and SSH private key file (default method)
+#   If one of ssh_pass, become_pass (sudo), and private_key are not needed, 
+#   comment them out based on your authentication method.
+ansible_user: centos
+# ansible_ssh_pass: samplePassword
+# ansible_become_pass: samplePassword
+ansible_ssh_private_key_file: ~/.ssh/id_rsa
+
+# Username and password for Splunk Enterprise admin user
+#   (used during initial install, not during upgrade)
+phantom_user: admin
+phantom_pass: splunker
+
+
+#
+# Splunk Installation & OS Level Defaults
+# (The variables are reasonable defaults and can be safely left alone)
+#
+
+# Ansible connection defaults
+ansible_connection: smart
+ansible_port: 22
+
+# User and group that will run splunkd on the OS and own Splunk files
+os_user: phantom
+os_group: phantom
+
+# Phantom home dir
+phantom_home: /opt/phantom
+
+# Checksum algorithm (md5 is the default)
+phantom_tgz_checksum_alg: sha256
+
+
+#
+# Splunk Phantom Configuration Settings
+# (These settings impact how Splunk is initially configured.)
+#
+
+phantom_https_port: 4443
+
+
+#==================================
+# Splunk Phantom Version Selector
+#==================================
+
+# Latest Splunk Phantom version, filename, and checksum (for wget pull)
+phantom_tgz: phantom-4.8.23319-1.tgz
+phantom_tgz_checksum: 5c0d8fafbe47a49339f200a5449f0a045ea7f20c9559ac12bbceb08c9f26fcab
+
+
+
+#===============================================================
+# Splunk Phantom Version Library 
+# (uncomment and copy to use) 
+#===============================================================
+
+# 4.8
+
+# phantom_tgz: phantom-4.8.23319-1.tgz
+# phantom_tgz_checksum: 5c0d8fafbe47a49339f200a5449f0a045ea7f20c9559ac12bbceb08c9f26fcab

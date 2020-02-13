@@ -1,0 +1,109 @@
+---
+
+- name: -Ubuntu- Tell cloud-init that its job is done (preserves hostname through reboots)
+  file:
+    path: /etc/cloud/cloud-init.disabled
+    state: exists
+  become: yes 
+  when: ansible_distribution == "Ubuntu"    
+
+
+- name: Set the hostname as per the Ansible inventory file
+  hostname:
+    name: "{{ inventory_hostname }}"
+  become: yes    
+
+
+- name: Add "{{ os_group }}" group (so we can set ulimits)
+  group:
+    name: "{{ os_group }}"
+    state: present  
+  become: yes  
+
+- name: Add "{{ os_user }}" user with the home dir /home/{{ os_user }}/ (so we can set ulimits)
+  user:
+    name: "{{ os_user }}"
+    group: "{{ os_group }}"
+    home: /home/{{ os_user }}/
+    shell: /bin/bash
+    comment: Phantom User
+  become: yes
+
+- name: Install Splunk Phantom prereq packages
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - git
+    - libevent
+    - c-ares
+    - bind-utils
+    - java-1.8.0-openjdk-headless
+    - mailcap
+    - fontconfig
+    - ntpdate
+    - perl
+    - rsync
+    - xmlsec1
+    - xmlsec1-openssl
+    - libxslt
+    - ntp
+    - zip
+    - net-tools
+    - policycoreutils-python
+    - libxml2
+    - libcurl
+    - gnutls
+  become: yes  
+
+
+- name: Set /etc/security/limits.conf for "{{ os_user }}" user
+  template:
+    src: limits.conf.j2
+    dest: "/etc/security/limits.conf"
+  become: yes
+
+
+- name: -THP- Disable Transparent Huge Pages (THP) Redhat part 1
+  command: "echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled"
+  become: yes 
+
+- name: -THP- Disable Transparent Huge Pages (THP) Redhat part 2
+  command: "echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag"
+  become: yes   
+
+- name: -THP- Disable Transparent Huge Pages (THP) - Linux Part 1
+  command: "echo never > /sys/kernel/mm/transparent_hugepage/enabled"
+  become: yes   
+
+- name: -THP- Disable Transparent Huge Pages (THP) - Linux Part 2
+  command: "echo never > /sys/kernel/mm/transparent_hugepage/defrag"
+  become: yes   
+
+
+- name: -RedHat & CentOS Updates-
+  yum:
+    name: "*"
+    state: latest  
+  become: yes
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+
+- name: Allow tcp/80 traffic through firewalld
+  firewalld:
+    service: http
+    permanent: yes
+    state: enabled
+  become: yes
+
+- name: Allow tcp/{{ phantom_https_port }} traffic through firewalld
+  firewalld:
+    port: "{{ phantom_https_port }}/tcp"
+    permanent: yes
+    state: enabled
+  become: yes  
+
+- name: Restart firewalld service
+  service:
+    name: firewalld
+    state: restarted  
