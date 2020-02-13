@@ -111,3 +111,4 @@ group_vars/all
 *hosts*
 *.retry
 files/*
+!files/README.md
