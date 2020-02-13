@@ -38,9 +38,6 @@ os_group: phantom
 # Phantom home dir
 phantom_home: /opt/phantom
 
-# Checksum algorithm (md5 is the default)
-phantom_tgz_checksum_alg: sha256
-
 
 #
 # Splunk Phantom Configuration Settings
@@ -48,6 +45,7 @@ phantom_tgz_checksum_alg: sha256
 #
 
 phantom_https_port: 4443
+
 
 
 #==================================
