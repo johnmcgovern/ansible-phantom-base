@@ -58,8 +58,9 @@
   become: yes  
 
 - name: -firewalld- Check if /usr/sbin/firewalld exists
-  stat: path=/usr/sbin/firewalld
-  register: firewalld_exists
+  stat: 
+    path: /usr/sbin/firewalld
+  register: firewalld_flag
 
 - name: -firewalld-  Allow tcp/80 traffic through firewalld
   firewalld:
@@ -67,7 +68,7 @@
     permanent: yes
     state: enabled
   become: yes
-  when: firewalld_exists == True
+  when: firewalld_flag.stat.exists == True
 
 - name: -firewalld-  Allow tcp/{{ phantom_https_port }} traffic through firewalld
   firewalld:
@@ -75,13 +76,13 @@
     permanent: yes
     state: enabled
   become: yes  
-  when: firewalld_exists == True
+  when: firewalld_flag.stat.exists == True
 
 - name: -firewalld- Reload firewalld rules while maintaining session state (be nice to Ansible)   
   command: 
     cmd: firewall-cmd --reload
   become: yes  
-  when: firewalld_exists == True
+  when: firewalld_flag.stat.exists == True
 
 - name: Check for the presence of /home/{{ os_user }}/{{ phantom_tgz }}
   stat: 
