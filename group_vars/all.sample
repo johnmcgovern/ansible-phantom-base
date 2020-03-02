@@ -16,11 +16,6 @@ ansible_user: centos
 # ansible_become_pass: samplePassword
 ansible_ssh_private_key_file: ~/.ssh/id_rsa
 
-# Username and password for Splunk Enterprise admin user
-#   (used during initial install, not during upgrade)
-phantom_user: admin
-phantom_pass: splunker
-
 
 #
 # Splunk Installation & OS Level Defaults
