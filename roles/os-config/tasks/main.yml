@@ -1,13 +1,5 @@
 ---
 
-- name: -Ubuntu- Tell cloud-init that its job is done (preserves hostname through reboots)
-  file:
-    path: /etc/cloud/cloud-init.disabled
-    state: exists
-  become: yes 
-  when: ansible_distribution == "Ubuntu"    
-
-
 - name: Set the hostname as per the Ansible inventory file
   hostname:
     name: "{{ inventory_hostname }}"
