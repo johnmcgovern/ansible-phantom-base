@@ -96,7 +96,7 @@
   copy:
     src: "files/{{ phantom_tgz }}"
     dest: /home/{{ os_user }}
-    mode: 0640
+    mode: '0640'
     owner: "{{ os_user }}"
     group: "{{ os_group }}"
   become: yes
