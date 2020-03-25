@@ -18,7 +18,7 @@ ansible_ssh_private_key_file: ~/.ssh/id_rsa
 
 
 #
-# Splunk Installation & OS Level Defaults
+# Phantom Installation & OS Level Defaults
 # (The variables are reasonable defaults and can be safely left alone)
 #
 
@@ -35,7 +35,7 @@ phantom_home: /opt/phantom
 
 
 #
-# Splunk Phantom Configuration Settings
+# Phantom Configuration Settings
 # (These settings impact how Splunk is initially configured.)
 #
 
@@ -47,9 +47,9 @@ phantom_https_port: 4443
 # Splunk Phantom Version Selector
 #==================================
 
-# Latest Splunk Phantom version, filename, and checksum (for wget pull)
-phantom_tgz: phantom-4.8.23319-1.tgz
-phantom_tgz_checksum: 5c0d8fafbe47a49339f200a5449f0a045ea7f20c9559ac12bbceb08c9f26fcab
+# Latest Splunk Phantom version, filename, and sha256 checksum (for wget pull)
+phantom_tgz: phantom-4.8.24304-1.tgz
+phantom_tgz_checksum: 9189d423042649502366387585164225950b7eb0fab116c2dbd0eb79409856bb
 
 
 
@@ -59,6 +59,9 @@ phantom_tgz_checksum: 5c0d8fafbe47a49339f200a5449f0a045ea7f20c9559ac12bbceb08c9f
 #===============================================================
 
 # 4.8
+
+# phantom_tgz: phantom-4.8.24304-1.tgz
+# phantom_tgz_checksum: 9189d423042649502366387585164225950b7eb0fab116c2dbd0eb79409856bb
 
 # phantom_tgz: phantom-4.8.23319-1.tgz
 # phantom_tgz_checksum: 5c0d8fafbe47a49339f200a5449f0a045ea7f20c9559ac12bbceb08c9f26fcab
