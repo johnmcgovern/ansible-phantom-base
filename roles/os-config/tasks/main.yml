@@ -82,6 +82,11 @@
   become: yes    
 
 
+- name: -firewalld- Check if /usr/sbin/firewalld exists
+  stat: 
+    path: /usr/sbin/firewalld
+  register: firewalld_flag
+
 - name: -firewalld-  Allow tcp/80 traffic through firewalld
   firewalld:
     service: http
