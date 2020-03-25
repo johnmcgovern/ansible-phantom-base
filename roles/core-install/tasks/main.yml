@@ -57,11 +57,6 @@
     - gnutls
   become: yes  
 
-- name: -firewalld- Check if /usr/sbin/firewalld exists
-  stat: 
-    path: /usr/sbin/firewalld
-  register: firewalld_flag
-
 - name: Check for the presence of /home/{{ os_user }}/{{ phantom_tgz }}
   stat: 
     path: /home/{{ os_user }}/{{ phantom_tgz }}
