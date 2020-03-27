@@ -1,6 +1,6 @@
 # Ansible-Phantom-Base
 
-This is an Ansible project that installs or upgrades (coming soon) Splunk Phantom to a specific version. It can also perform basic OS config (ulimits, THP disabled, firealld, hostname, etc.) in service of setting up a bare OS.
+This is an Ansible project that installs or upgrades Splunk Phantom to a specific version. It can also perform basic OS config (ulimits, THP disabled, firealld, hostname, etc.) in service of setting up a bare OS for Phantom to run on.
 
 
 ### Setup
@@ -50,7 +50,7 @@ This is an Ansible project that installs or upgrades (coming soon) Splunk Phanto
 
 		- ansible-playbook -i hosts install.yml
 
-3. -or- run the Splunk Phantom upgrade playbook (coming soon)
+3. -or- run the Splunk Phantom upgrade playbook
 
 		- ansible-playbook -i hosts upgrade.yml
 
@@ -77,7 +77,6 @@ This role is tested on:
 
 ### To-Do
 
-- Phantom upgrade support.
 - More systemd best practice settings coverage.
 
 
