@@ -1,0 +1,5 @@
+
+[splunkhosts]
+phantom01 ansible_host=172.16.55.133
+
+ 
