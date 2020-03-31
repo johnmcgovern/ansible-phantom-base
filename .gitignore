@@ -108,6 +108,7 @@ venv.bak/
 
 # Project specific
 group_vars/all
+!hosts.sample
 *hosts*
 *.retry
 files/*

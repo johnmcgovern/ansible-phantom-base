@@ -26,8 +26,8 @@
 - name: Clear yum caches (note this is not supported in yum module so we have to do it in command module)
   command:
     cmd: "yum clean all"
+    warn: false
   become: yes
-  warn: false
 
 - name: Check for OS package updates (excluding nginx).
   yum:
