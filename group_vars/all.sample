@@ -47,7 +47,7 @@ phantom_https_port: 4443
 # Splunk Phantom Version Selector
 #==================================
 
-# Latest Splunk Phantom version, filename, and sha256 checksum (for wget pull)
+# Latest Splunk Phantom version, filename, and sha256 checksum (for upload)
 phantom_tgz: phantom-4.8.24304-1.tgz
 phantom_tgz_checksum: 9189d423042649502366387585164225950b7eb0fab116c2dbd0eb79409856bb
 
