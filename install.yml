@@ -1,5 +1,5 @@
 ---
-# This playbook deploys a basic Splunk Enterprise (Core) installation
+# This playbook deploys a basic Splunk Phantominstallation
 
 - name: Apply prereqs to all nodes
   hosts: all
@@ -7,7 +7,7 @@
   roles:
     - prereqs
 
-- name: Install Splunk
+- name: Install Phantom
   hosts: all
   roles:
     - core-install
