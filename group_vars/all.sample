@@ -17,6 +17,24 @@ ansible_user: centos
 ansible_ssh_private_key_file: ~/.ssh/id_rsa
 
 
+# Username and password for Splunk Enterprise admin user
+#   (used during initial install, not during upgrade)
+phantom_pass: ChangeThisPassword
+
+
+# Whether to upload from a local directory (true) (default)
+#  or download from a URL (false)
+upload_from_local_dir: true
+
+# Optional download location if upload_from_local_dir is false
+# Only required if downloading TGZ from an external server
+# Site URL only (filename is specified in phantom_tgz below) (no trailing "/")
+phantom_tgz_download_url: "https://some-location.site.com"
+
+# Checksum algorithm (sha256 is the default)
+phantom_tgz_checksum_alg: sha256
+
+
 #
 # Phantom Installation & OS Level Defaults
 # (The variables are reasonable defaults and can be safely left alone)
@@ -36,10 +54,15 @@ phantom_home: /opt/phantom
 
 #
 # Phantom Configuration Settings
-# (These settings impact how Splunk is initially configured.)
+# (These settings impact how Phantom is initially configured.)
 #
 
+# Phantom Web UI Port
 phantom_https_port: 4443
+
+# Upload and install custom SSL certs (certs/httpd_cert.crt and certs/httpd_cert.key)
+# true or false (default)
+use_custom_ssl_certs: false
 
 
 
@@ -47,7 +70,7 @@ phantom_https_port: 4443
 # Splunk Phantom Version Selector
 #==================================
 
-# Latest Splunk Phantom version, filename, and sha256 checksum (for upload)
+# Latest Splunk Phantom version, filename, and SHA-256 checksum (for upload)
 phantom_tgz: phantom-4.8.24304-1.tgz
 phantom_tgz_checksum: 9189d423042649502366387585164225950b7eb0fab116c2dbd0eb79409856bb
 

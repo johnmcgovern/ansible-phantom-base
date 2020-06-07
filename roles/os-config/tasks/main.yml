@@ -21,11 +21,19 @@
     comment: Phantom User
   become: yes
 
+
+- name: Install EPEL repo (required to install python-pip)
+  yum:
+    name: epel-release
+    state: present
+  become: yes    
+
 - name: Install Splunk Phantom prereq packages
   yum:
     name: "{{ packages }}"
   vars:
     packages:
+    - python-pip
     - git
     - libevent
     - c-ares
@@ -46,6 +54,11 @@
     - libxml2
     - libcurl
     - gnutls
+  become: yes  
+
+- name: Install pexpect
+  pip:
+    name: pexpect>3.3
   become: yes  
 
 

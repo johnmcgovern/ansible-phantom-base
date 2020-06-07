@@ -21,7 +21,7 @@
     dest: "/etc/security/limits.conf"
   become: yes 
 
-- name: Create {{ phantom_home }} dir
+- name: Create "{{ phantom_home }}" dir
   file:
     path: "{{ phantom_home }}"
     state: directory
@@ -30,11 +30,18 @@
     group: "{{ os_group }}"
   become: yes
 
+- name: Install EPEL repo (required to install python-pip)
+  yum:
+    name: epel-release
+    state: present
+  become: yes    
+
 - name: Install Splunk Phantom prereq packages
   yum:
     name: "{{ packages }}"
   vars:
     packages:
+    - python-pip
     - git
     - libevent
     - c-ares
@@ -65,7 +72,7 @@
   register: phantom_tgz_downloaded_flag
   become: yes
 
-- name: Copy files/{{ phantom_tgz }} (local) to /home/{{ os_user }}/ (remote)
+- name: -Upload- Copy files/{{ phantom_tgz }} (local) to /home/{{ os_user }}/ (remote)
   copy:
     src: "files/{{ phantom_tgz }}"
     dest: /home/{{ os_user }}
@@ -73,9 +80,20 @@
     owner: "{{ os_user }}"
     group: "{{ os_group }}"
   become: yes
-  when: phantom_tgz_downloaded_flag.stat.exists == False
+  when: phantom_tgz_downloaded_flag.stat.exists == False and upload_from_local_dir
 
-- name: Extract {{ phantom_tgz }} to {{ phantom_home }}
+- name: -Download- Download (wget) {{ phantom_tgz_download_url }}/{{ phantom_tgz }}
+  get_url:
+    url: "{{ phantom_tgz_download_url }}/{{ phantom_tgz }}"
+    checksum: "{{ phantom_tgz_checksum_alg }}:{{ phantom_tgz_checksum }}"
+    dest: /home/{{ os_user }}
+    mode: '0640'  
+    owner: "{{ os_user }}"
+    group: "{{ os_group }}"
+  become: yes
+  when: phantom_tgz_downloaded_flag.stat.exists == False and not upload_from_local_dir
+
+- name: -Stage- Extract {{ phantom_tgz }} to {{ phantom_home }}
   unarchive:
     src: /home/{{ os_user }}/{{ phantom_tgz }}
     dest: "{{ phantom_home }}/"
@@ -84,7 +102,7 @@
     group: "{{ os_group }}"
   become: yes
 
-- name: Set {{ phantom_home }} owner & group recursively
+- name: -Stage- Set {{ phantom_home }} owner & group recursively
   file:
     path: "{{ phantom_home }}"
     state: directory
@@ -93,10 +111,54 @@
     recurse: yes
   become: yes  
 
-- name: Install Phantom using the phantom_tar_install.sh script unless already installed
+
+- name: -Install- Install Phantom using the phantom_tar_install.sh script unless already installed
   command:
     chdir: "{{ phantom_home }}/"
     cmd: "./phantom_tar_install.sh install --no-prompt --without-apps --https-port={{ phantom_https_port }}"
     creates: "{{ phantom_home }}/var/log/phantom/phantom_install_log"
   become: yes
   become_user: "{{ os_user }}"
+
+
+- name: -Admin Password- Install pexpect (prereq for next step)
+  pip:
+    name: pexpect>3.3
+  become: yes  
+
+- name: -Admin Password- Set the password for the Phantom web "admin" account
+  expect:
+    command: /bin/bash -c "/opt/phantom/bin/phenv python2.7 /opt/phantom/www/manage.py changepassword admin"
+    responses:
+      (?i)Password: "{{ phantom_pass }}"
+  environment: 
+    PYTHONPATH: "/opt/phantom/lib/:/opt/phantom/www/"
+  become: yes
+  become_user: "{{ os_user }}"
+
+
+- name: -SSL Certs- Upload public key file (certs/httpd_cert.crt)
+  copy:
+    src: "certs/httpd_cert.crt"
+    dest: "{{ phantom_home }}/etc/ssl/certs/httpd_cert.crt"
+    mode: '0640'
+    owner: "{{ os_user }}"
+    group: "{{ os_group }}"
+  become: yes
+  when: use_custom_ssl_certs
+
+- name: -SSL Certs- Upload private key file (certs/httpd_cert.key)
+  copy:
+    src: "certs/httpd_cert.key"
+    dest: "{{ phantom_home }}/etc/ssl/private/httpd_cert.key"
+    mode: '0640'
+    owner: "{{ os_user }}"
+    group: "{{ os_group }}"
+  become: yes
+  when: use_custom_ssl_certs  
+
+- name: -SSL Certs- Restart nginx service
+  command: "{{ phantom_home }}/bin/nginx restart"
+  become: yes  
+  become_user: "{{ os_user }}"
+  when: use_custom_ssl_certs  
