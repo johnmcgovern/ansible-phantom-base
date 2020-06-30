@@ -31,7 +31,7 @@ This is an Ansible project that installs or upgrades Splunk Phantom to a specifi
 
 		- cp group_vars/all.sample group_vars/all
 
-7. Edit group_vars/all variables as appropriate for your enviornment
+7. Edit group_vars/all variables as appropriate for your environment
 
 		- vi group_vars/all
 
@@ -73,6 +73,8 @@ This role is tested on:
 ### Notes
 
 - The goal of this role is to quickly execute a best-practices base Splunk Phantom install/upgrade.
+- We now have the ability to (optionally) download the TGZ from a provided URL rather than upload it via the ./files/ folder. See group_vars/all for the required variables.
+- We also can now install an SSL cert (public/private key pair, PEM formatted) automatically using the ./certs/ folder. See group_vars/all for the required variables.
 
 
 ### To-Do

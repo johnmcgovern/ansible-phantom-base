@@ -1,6 +1,6 @@
 ---
 
-- name: Stop Phantom
+- name: Stop Phantom for pre-upgrade OS updates, checks, etc.
   command:
     chdir: "{{ phantom_home }}/bin/"
     cmd: "./stop_phantom.sh"
@@ -13,32 +13,23 @@
     dest: "/etc/security/limits.conf"
   become: yes 
 
-- name: Ensure {{ phantom_home }} exists
-  file:
-    path: "{{ phantom_home }}"
-    state: directory
-    mode: 0755  
-    owner: "{{ os_user }}"
-    group: "{{ os_group }}"
-  become: yes
 
-
-- name: Clear yum caches (note this is not supported in yum module so we have to do it in command module)
+- name: -OS Updates- Clear yum caches (note this is not supported in yum module so we have to do it in command module)
   command:
     cmd: "yum clean all"
     warn: false
   become: yes
 
-- name: Check for OS package updates (excluding nginx).
+- name: -OS Updates- Check for OS package updates (excluding nginx)
   yum:
     name: "*"
     state: latest 
     exclude: nginx* 
   become: yes
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Amazon'
 
 
-- name: Check for the presence of /home/{{ os_user }}/{{ phantom_tgz }}
+- name: -OS Updates- Check for the presence of /home/{{ os_user }}/{{ phantom_tgz }}
   stat: 
     path: /home/{{ os_user }}/{{ phantom_tgz }}
     get_checksum: yes  
@@ -46,7 +37,8 @@
   register: phantom_tgz_downloaded_flag
   become: yes
 
-- name: Copy files/{{ phantom_tgz }} (local) to /home/{{ os_user }}/ (remote)
+
+- name: -Upload- Copy files/{{ phantom_tgz }} (local) to /home/{{ os_user }}/ (remote)
   copy:
     src: "files/{{ phantom_tgz }}"
     dest: /home/{{ os_user }}
@@ -54,9 +46,21 @@
     owner: "{{ os_user }}"
     group: "{{ os_group }}"
   become: yes
-  when: phantom_tgz_downloaded_flag.stat.exists == False
+  when: phantom_tgz_downloaded_flag.stat.exists == False and upload_from_local_dir
 
-- name: Extract {{ phantom_tgz }} to {{ phantom_home }}
+- name: -Download- Download (wget) {{ phantom_tgz_download_url }}/{{ phantom_tgz }}
+  get_url:
+    url: "{{ phantom_tgz_download_url }}/{{ phantom_tgz }}"
+    checksum: "{{ phantom_tgz_checksum_alg }}:{{ phantom_tgz_checksum }}"
+    dest: /home/{{ os_user }}
+    mode: '0640'  
+    owner: "{{ os_user }}"
+    group: "{{ os_group }}"
+  become: yes
+  when: phantom_tgz_downloaded_flag.stat.exists == False and not upload_from_local_dir
+
+
+- name: Extract {{ phantom_tgz }} onto {{ phantom_home }}
   unarchive:
     src: /home/{{ os_user }}/{{ phantom_tgz }}
     dest: "{{ phantom_home }}/"
@@ -74,6 +78,13 @@
     recurse: yes
   become: yes  
 
+
+- name: Start Phantom
+  command:
+    chdir: "{{ phantom_home }}/bin/"
+    cmd: "./start_phantom.sh"
+  become: yes
+  become_user: "{{ os_user }}"
 
 - name: Upgrade Phantom using the phantom_tar_install.sh script
   command:

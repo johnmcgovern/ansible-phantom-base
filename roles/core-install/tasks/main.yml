@@ -30,20 +30,23 @@
     group: "{{ os_group }}"
   become: yes
 
-- name: Install EPEL repo (required to install python-pip)
+
+- name: -Prereqs- Install EPEL repo (required to install python-pip)
   yum:
     name: epel-release
     state: present
   become: yes    
 
-- name: Install Splunk Phantom prereq packages
+- name: -Prereqs- Install Splunk Phantom prereq packages
   yum:
     name: "{{ packages }}"
   vars:
     packages:
     - python-pip
     - git
+    - wget
     - libevent
+    - libicu
     - c-ares
     - bind-utils
     - java-1.8.0-openjdk-headless
@@ -63,6 +66,7 @@
     - libcurl
     - gnutls
   become: yes  
+
 
 - name: Check for the presence of /home/{{ os_user }}/{{ phantom_tgz }}
   stat: 
@@ -92,6 +96,7 @@
     group: "{{ os_group }}"
   become: yes
   when: phantom_tgz_downloaded_flag.stat.exists == False and not upload_from_local_dir
+
 
 - name: -Stage- Extract {{ phantom_tgz }} to {{ phantom_home }}
   unarchive:
@@ -128,7 +133,7 @@
 
 - name: -Admin Password- Set the password for the Phantom web "admin" account
   expect:
-    command: /bin/bash -c "/opt/phantom/bin/phenv python2.7 /opt/phantom/www/manage.py changepassword admin"
+    command: /bin/bash -c "/opt/phantom/bin/phenv python /opt/phantom/www/manage.py changepassword admin"
     responses:
       (?i)Password: "{{ phantom_pass }}"
   environment: 

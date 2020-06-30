@@ -22,20 +22,22 @@
   become: yes
 
 
-- name: Install EPEL repo (required to install python-pip)
+- name: -Prereqs- Install EPEL repo (required to install python-pip)
   yum:
     name: epel-release
     state: present
   become: yes    
 
-- name: Install Splunk Phantom prereq packages
+- name: -Prereqs- Install Splunk Phantom prereq packages
   yum:
     name: "{{ packages }}"
   vars:
     packages:
     - python-pip
     - git
+    - wget
     - libevent
+    - libicu
     - c-ares
     - bind-utils
     - java-1.8.0-openjdk-headless
@@ -56,7 +58,7 @@
     - gnutls
   become: yes  
 
-- name: Install pexpect
+- name: -Prereqs- Install pexpect
   pip:
     name: pexpect>3.3
   become: yes  

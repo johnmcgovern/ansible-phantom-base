@@ -19,7 +19,7 @@ ansible_ssh_private_key_file: ~/.ssh/id_rsa
 
 # Username and password for Splunk Enterprise admin user
 #   (used during initial install, not during upgrade)
-phantom_pass: ChangeThisPassword
+phantom_pass: phantom123
 
 
 # Whether to upload from a local directory (true) (default)
@@ -29,7 +29,7 @@ upload_from_local_dir: true
 # Optional download location if upload_from_local_dir is false
 # Only required if downloading TGZ from an external server
 # Site URL only (filename is specified in phantom_tgz below) (no trailing "/")
-phantom_tgz_download_url: "https://some-location.site.com"
+phantom_tgz_download_url: "https://my-sample-location.s3-us-west-2.amazonaws.com"
 
 # Checksum algorithm (sha256 is the default)
 phantom_tgz_checksum_alg: sha256
@@ -71,8 +71,8 @@ use_custom_ssl_certs: false
 #==================================
 
 # Latest Splunk Phantom version, filename, and SHA-256 checksum (for upload)
-phantom_tgz: phantom-4.8.24304-1.tgz
-phantom_tgz_checksum: 9189d423042649502366387585164225950b7eb0fab116c2dbd0eb79409856bb
+phantom_tgz: phantom-4.9.33071-1.tgz
+phantom_tgz_checksum: 70f0fb22097712e58f69440a5f7870b09e7dde36b276a7fbc3f70745bceec31d
 
 
 
@@ -80,6 +80,11 @@ phantom_tgz_checksum: 9189d423042649502366387585164225950b7eb0fab116c2dbd0eb7940
 # Splunk Phantom Version Library 
 # (uncomment and copy to use) 
 #===============================================================
+
+# 4.9
+
+# phantom_tgz: phantom-4.9.33071-1.tgz
+# phantom_tgz_checksum: 70f0fb22097712e58f69440a5f7870b09e7dde36b276a7fbc3f70745bceec31d
 
 # 4.8
 
