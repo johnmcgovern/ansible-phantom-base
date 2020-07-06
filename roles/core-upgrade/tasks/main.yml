@@ -29,14 +29,13 @@
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Amazon'
 
 
-- name: -OS Updates- Check for the presence of /home/{{ os_user }}/{{ phantom_tgz }}
+- name: Check for the presence of /home/{{ os_user }}/{{ phantom_tgz }}
   stat: 
     path: /home/{{ os_user }}/{{ phantom_tgz }}
     get_checksum: yes  
     checksum_algorithm: sha256
   register: phantom_tgz_downloaded_flag
   become: yes
-
 
 - name: -Upload- Copy files/{{ phantom_tgz }} (local) to /home/{{ os_user }}/ (remote)
   copy:
