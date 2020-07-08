@@ -91,3 +91,9 @@
     cmd: "./phantom_tar_install.sh upgrade --no-prompt --without-apps"
   become: yes
   become_user: "{{ os_user }}"
+
+- name: Run Postgres database cleanup script
+  command:
+    cmd: "{{ phantom_home }}/bin/phenv {{ phantom_home }}/usr/postgresql/bin/vacuumdb -h /tmp --all --analyze-in-stages"
+  become: yes
+  become_user: "{{ os_user }}"
