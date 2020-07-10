@@ -26,7 +26,8 @@
   yum:
     name: epel-release
     state: present
-  become: yes    
+  become: yes
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'    
 
 - name: -Prereqs- Install Splunk Phantom prereq packages
   yum:
