@@ -1,0 +1,24 @@
+---
+
+- name: -SSL Certs- Upload public key file (certs/httpd_cert.crt)
+  copy:
+    src: "certs/httpd_cert.crt"
+    dest: "{{ phantom_home }}/etc/ssl/certs/httpd_cert.crt"
+    mode: '0640'
+    owner: "{{ os_user }}"
+    group: "{{ os_group }}"
+  become: yes
+
+- name: -SSL Certs- Upload private key file (certs/httpd_cert.key)
+  copy:
+    src: "certs/httpd_cert.key"
+    dest: "{{ phantom_home }}/etc/ssl/private/httpd_cert.key"
+    mode: '0640'
+    owner: "{{ os_user }}"
+    group: "{{ os_group }}"
+  become: yes
+
+- name: -SSL Certs- Restart nginx service
+  command: "{{ phantom_home }}/bin/nginx restart"
+  become: yes  
+  become_user: "{{ os_user }}"
