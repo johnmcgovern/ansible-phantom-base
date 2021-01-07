@@ -1,5 +1,13 @@
 ---
 
+- name: -Prereqs- Install openssl so we can generate dhparams.pem
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - openssl
+  become: yes  
+
 - name: -SSL Certs- Upload public key file (certs/httpd_cert.crt)
   copy:
     src: "certs/httpd_cert.crt"
@@ -18,7 +26,15 @@
     group: "{{ os_group }}"
   become: yes
 
-- name: -SSL Certs- Restart nginx service
+- name: -SSL Certs- Create 4096 bit dhparams.pem (this can take a few minutes)
+  command:
+    chdir: "{{ phantom_home }}/etc/ssl/"
+    cmd: "openssl dhparam -out {{ phantom_home }}/etc/ssl/dhparams.pem 4096"
+    creates: "{{ phantom_home }}/etc/ssl/dhparams.pem"
+  become: yes
+  become_user: "{{ os_user }}"  
+
+- name: -nginx- Restart nginx service
   command: "{{ phantom_home }}/bin/nginx restart"
   become: yes  
   become_user: "{{ os_user }}"
