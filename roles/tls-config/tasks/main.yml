@@ -26,7 +26,7 @@
     group: "{{ os_group }}"
   become: yes
 
-- name: -SSL Certs- Create 4096 bit dhparams.pem (this can take a few minutes)
+- name: -SSL Certs- Create 4096 bit dhparams.pem (this can take a few minutes) (required for certain nginx versions)
   command:
     chdir: "{{ phantom_home }}/etc/ssl/"
     cmd: "openssl dhparam -out {{ phantom_home }}/etc/ssl/dhparams.pem 4096"

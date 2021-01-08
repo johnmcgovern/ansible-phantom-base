@@ -58,7 +58,15 @@ This is an Ansible project that installs or upgrades Splunk Phantom to a specifi
 
 		- ansible-playbook -i hosts os-config.yml
 
-5. -or- run an Ansible playbook limited to certain hosts within the hosts list
+5. -or- run the OS config and Phantom install playbooks together
+
+		- ansible-playbook -i hosts combo.yml
+
+6. -or- install a valid SSL certificate (user provided)
+
+		- ansible-playbook -i hosts tls-config.yml				
+
+7. -or- run an Ansible playbook limited to certain hosts within the hosts list
 
 		- ansible-playbook -i hosts --limit=host1 install.yml
 
