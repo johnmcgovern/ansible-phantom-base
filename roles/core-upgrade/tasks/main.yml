@@ -1,34 +1,5 @@
 ---
 
-- name: Stop Phantom for pre-upgrade OS updates, checks, etc.
-  command:
-    chdir: "{{ phantom_home }}/bin/"
-    cmd: "./stop_phantom.sh"
-  become: yes
-  become_user: "{{ os_user }}"
-
-- name: -ulimits- Set /etc/security/limits.conf for "{{ os_user }}" user
-  template:
-    src: limits.conf.j2
-    dest: "/etc/security/limits.conf"
-  become: yes 
-
-
-- name: -OS Updates- Clear yum caches (note this is not supported in yum module so we have to do it in command module)
-  command:
-    cmd: "yum clean all"
-    warn: false
-  become: yes
-
-- name: -OS Updates- Check for OS package updates (excluding nginx)
-  yum:
-    name: "*"
-    state: latest 
-    exclude: nginx* 
-  become: yes
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Amazon'
-
-
 - name: Check for the presence of /home/{{ os_user }}/{{ phantom_tgz }}
   stat: 
     path: /home/{{ os_user }}/{{ phantom_tgz }}
@@ -57,6 +28,35 @@
     group: "{{ os_group }}"
   become: yes
   when: phantom_tgz_downloaded_flag.stat.exists == False and not upload_from_local_dir
+
+
+- name: Stop Phantom for pre-upgrade OS updates, checks, etc.
+  command:
+    chdir: "{{ phantom_home }}/bin/"
+    cmd: "./stop_phantom.sh"
+  become: yes
+  become_user: "{{ os_user }}"
+
+- name: -ulimits- Set /etc/security/limits.conf for "{{ os_user }}" user
+  template:
+    src: limits.conf.j2
+    dest: "/etc/security/limits.conf"
+  become: yes 
+
+
+- name: -OS Updates- Clear yum caches (note this is not supported in yum module so we have to do it in command module)
+  command:
+    cmd: "yum clean all"
+    warn: false
+  become: yes
+
+- name: -OS Updates- Check for OS package updates (excluding nginx)
+  yum:
+    name: "*"
+    state: latest 
+    exclude: nginx* 
+  become: yes
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Amazon'
 
 
 - name: Extract {{ phantom_tgz }} onto {{ phantom_home }}
