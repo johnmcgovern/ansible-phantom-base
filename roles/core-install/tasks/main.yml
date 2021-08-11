@@ -122,7 +122,7 @@
 - name: -Install- Install Phantom using the phantom_tar_install.sh script unless already installed
   command:
     chdir: "{{ phantom_home }}/"
-    cmd: "./phantom_tar_install.sh install --no-prompt --without-apps --https-port={{ phantom_https_port }}"
+    cmd: "./phantom_tar_install.sh install --no-prompt --https-port={{ phantom_https_port }}"
     creates: "{{ phantom_home }}/var/log/phantom/phantom_install_log"
   become: yes
   become_user: "{{ os_user }}"
