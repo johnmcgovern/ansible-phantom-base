@@ -71,14 +71,19 @@ use_custom_ssl_certs: false
 #==================================
 
 # Latest Splunk Phantom version, filename, and SHA-256 checksum (for upload)
-phantom_tgz: phantom-4.10.7.63984-1.tar
-phantom_tgz_checksum: 2dbd52c2474a6df615b8dcc9dabbe85f793a6e129355e49b14d687073a18bcc5
+phantom_tgz: phantom-5.0.1.66250-1.tar
+phantom_tgz_checksum: 14de4743ca77a06214499a130c54665e5a1033f225be42e474649bc9d4206593
 
 
 #===============================================================
 # Splunk Phantom Version Library 
 # (uncomment and copy to use) 
 #===============================================================
+
+# 5.0
+
+# phantom_tgz: phantom-5.0.1.66250-1.tar
+# phantom_tgz_checksum: 14de4743ca77a06214499a130c54665e5a1033f225be42e474649bc9d4206593
 
 # 4.10
 
