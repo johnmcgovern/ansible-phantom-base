@@ -1,5 +1,13 @@
 ---
 
+- name: Disable Phantom upgrade version check using an environment variable
+  lineinfile:
+    dest: ~/.bashrc
+    line: "export PHANTOM_NO_VERSION_CHECK=1"
+    owner: "{{ os_user }}"
+  become: yes
+  become_user: "{{ os_user }}" 
+
 - name: Check for the presence of /home/{{ os_user }}/{{ phantom_tgz }}
   stat: 
     path: /home/{{ os_user }}/{{ phantom_tgz }}
@@ -68,7 +76,7 @@
     group: "{{ os_group }}"
   become: yes
 
-- name: Set {{ phantom_home }} owner & group recursively
+- name: Set {{ phantom_home }} owner & group recursively ({{ os_user }}:{{ os_group }})
   file:
     path: "{{ phantom_home }}"
     state: directory
