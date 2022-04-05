@@ -16,7 +16,7 @@
   register: phantom_tgz_downloaded_flag
   become: yes
 
-- name: -Upload- Copy files/{{ phantom_tgz }} (local) to /home/{{ os_user }}/ (remote)
+- name: -Upload- Copy files/{{ phantom_tgz }} (local) to /home/{{ os_user }}/{{ phantom_tgz }} (remote)
   copy:
     src: "files/{{ phantom_tgz }}"
     dest: /home/{{ os_user }}
@@ -93,12 +93,23 @@
   become: yes
   become_user: "{{ os_user }}"
 
-- name: Upgrade Phantom using the {{ phantom_home }}/phantom_tar_install.sh script
+- name: Upgrade Phantom (<5.3.0) using the {{ phantom_home }}/phantom_tar_install.sh script
   command:
     chdir: "{{ phantom_home }}"
-    cmd: "{{ phantom_home }}/bin/phenv {{ phantom_home }}/phantom_tar_install.sh upgrade --no-prompt --without-apps"
+    cmd: "{{ phantom_home }}/bin/phenv {{ phantom_home }}/phantom_tar_install.sh upgrade --no-prompt --with-apps"
   become: yes
   become_user: "{{ os_user }}"
+  when: 
+    - phantom_version is version('5.3.0', '<')    
+
+- name: Upgrade SOAR (>=5.3.0) using the {{ phantom_home }}/soar-install script (--with-apps now required)
+  command:
+    chdir: "{{ phantom_home }}"
+    cmd: "{{ phantom_home }}/bin/phenv {{ phantom_home }}/soar-install --upgrade --no-prompt --with-apps"
+  become: yes
+  become_user: "{{ os_user }}"
+  when: 
+    - phantom_version is version('5.3.0', '>=')  
 
 - name: Run Postgres database cleanup script
   command:
