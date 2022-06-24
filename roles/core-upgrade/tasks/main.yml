@@ -86,14 +86,14 @@
   become: yes  
 
 
-- name: Start Phantom
+- name: Start SOAR
   command:
     chdir: "{{ phantom_home }}/bin/"
     cmd: "./start_phantom.sh"
   become: yes
   become_user: "{{ os_user }}"
 
-- name: Upgrade Phantom (<5.3.0) using the {{ phantom_home }}/phantom_tar_install.sh script
+- name: Upgrade SOAR (<5.3.0) using the {{ phantom_home }}/phantom_tar_install.sh script
   command:
     chdir: "{{ phantom_home }}"
     cmd: "{{ phantom_home }}/bin/phenv {{ phantom_home }}/phantom_tar_install.sh upgrade --no-prompt --with-apps"
