@@ -57,8 +57,8 @@ phantom_home: /opt/phantom
 # (These settings impact how Phantom is initially configured.)
 #
 
-# Phantom Web UI Port
-phantom_https_port: 4443
+# Phantom Web UI Port (default 8443)
+phantom_https_port: 8443
 
 # Upload and install custom SSL certs (certs/httpd_cert.crt and certs/httpd_cert.key)
 # true or false (default)
@@ -71,9 +71,9 @@ use_custom_ssl_certs: false
 #==================================
 
 # Latest Splunk Phantom version, filename, and SHA-256 checksum (for upload)
-phantom_version: 5.3.2
-phantom_tgz: splunk_soar-unpriv-5.3.2.88192-4eadac93-el7-x86_64.tar
-phantom_tgz_checksum: 6974ddc612250654a801d9025f158ebd4c76db1cf8dcaab8d5cf588f25a81a6b
+phantom_version: 5.3.3
+phantom_tgz: splunk_soar-unpriv-5.3.3.92213-ebef80f6-el7-x86_64.tar
+phantom_tgz_checksum: b808c4cbe30041ca84be466f78a4572d4a79e57d20dc383339554bc287ac2677
 
 
 #===============================================================
@@ -82,6 +82,9 @@ phantom_tgz_checksum: 6974ddc612250654a801d9025f158ebd4c76db1cf8dcaab8d5cf588f25
 #===============================================================
 
 # 5.3
+
+# phantom_tgz: splunk_soar-unpriv-5.3.3.92213-ebef80f6-el7-x86_64.tar
+# phantom_tgz_checksum: b808c4cbe30041ca84be466f78a4572d4a79e57d20dc383339554bc287ac2677
 
 # phantom_tgz: splunk_soar-unpriv-5.3.2.88192-4eadac93-el7-x86_64.tar
 # phantom_tgz_checksum: 6974ddc612250654a801d9025f158ebd4c76db1cf8dcaab8d5cf588f25a81a6b
