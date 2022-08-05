@@ -44,7 +44,7 @@
   become: yes
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'    
 
-- name: -Prereqs- Seperate task to ensure that python-pip is installed regardless of version
+- name: -Prereqs- Install python-setuptools & python-pip
   yum:
     name: "{{ packages }}"
   vars:

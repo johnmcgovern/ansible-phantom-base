@@ -53,14 +53,13 @@
   become: yes    
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'    
 
-- name: -Prereqs- Seperate task to ensure that python-pip is installed regardless of version
+- name: -Prereqs- Install python-setuptools & python-pip
   yum:
     name: "{{ packages }}"
   vars:
     packages:
     - python-setuptools
     - python-pip
-    - 
   become: yes
 
 - name: -Prereqs- Install Splunk Phantom prereq packages
@@ -147,7 +146,7 @@
 - name: -Prep- Run the soar-prepare-system script (>= 5.3.0 && <= 5.3.2)
   command:
     chdir: "{{ phantom_home }}"
-    cmd: "./soar-prepare-system --splunk-soar-home {{ phantom_home }} --no-prompt --https-port {{ phantom_https_port }}"
+    cmd: "./soar-prepare-system --splunk-soar-home {{ phantom_home }} --no-prompt --https-port {{ phantom_https_port }} --splunk-soar-user {{ os_user }}"
   become: yes
   when:
     - phantom_version is version('5.3.0', '>=') 
@@ -156,13 +155,13 @@
 - name: -Prep- Run the soar-prepare-system script (>= 5.3.3)
   command:
     chdir: "{{ phantom_home }}/splunk-soar"
-    cmd: "./soar-prepare-system --splunk-soar-home {{ phantom_home }} --no-prompt --https-port {{ phantom_https_port }}"
+    cmd: "./soar-prepare-system --splunk-soar-home {{ phantom_home }} --no-prompt --https-port {{ phantom_https_port }} --splunk-soar-user {{ os_user }}"
   become: yes
   when: 
     - phantom_version is version('5.3.3', '>=')     
 
 
-- name: -Install- Install SOAR using the phantom_tar_install.sh script unless already installed (< 5.3.0)
+- name: -Install- Install SOAR using the phantom_tar_install.sh script (< 5.3.0)
   command:
     chdir: "{{ phantom_home }}"
     cmd: "./phantom_tar_install.sh install --no-prompt --https-port={{ phantom_https_port }}"
@@ -171,20 +170,22 @@
   when: 
     - phantom_version is version('5.3.0', '<')  
 
-- name: -Install- Install SOAR using the soar-install script unless already installed (>= 5.3.0 && <= 5.3.2)
+- name: -Install- Install SOAR using the soar-install script (>= 5.3.0 && <= 5.3.2)
   command:
     chdir: "{{ phantom_home }}"
     cmd: "./soar-install --splunk-soar-home {{ phantom_home }} --no-prompt --https-port={{ phantom_https_port }} --ignore-warnings"
+    ignore_errors: yes 
   become: yes
   become_user: "{{ os_user }}"
   when:
     - phantom_version is version('5.3.0', '>=') 
-    - phantom_version is version('5.3.2', '<=')  
+    - phantom_version is version('5.3.2', '<=') 
 
-- name: -Install- Install SOAR using the splunk-soar/soar-install script unless already installed (>= 5.3.3)
+- name: -Install- Install SOAR using the splunk-soar/soar-install script (>= 5.3.3)
   command:
     chdir: "{{ phantom_home }}/splunk-soar"
     cmd: "./soar-install --splunk-soar-home {{ phantom_home }} --no-prompt --https-port={{ phantom_https_port }} --ignore-warnings"
+    ignore_errors: yes 
   become: yes
   become_user: "{{ os_user }}"
   when: 
@@ -196,7 +197,7 @@
     name: pexpect>3.3
   become: yes  
 
-- name: -Admin Password- Set the password for the SOAR web "admin" account
+- name: -Admin Password- Set the password for the SOAR web "admin" account ("password" is default)
   expect:
     command: /bin/bash -c "/opt/phantom/bin/phenv python /opt/phantom/www/manage.py changepassword admin"
     responses:
