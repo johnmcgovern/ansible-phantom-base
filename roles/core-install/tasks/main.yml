@@ -31,6 +31,21 @@
   become: yes
 
 
+- name: -OS Updates- Clear yum caches (note this is not supported in yum module so we have to do it in command module)
+  command:
+    cmd: "yum clean all"
+    warn: false
+  become: yes
+
+- name: -OS Updates- Check for OS package updates (excluding nginx)
+  yum:
+    name: "*"
+    state: latest 
+    exclude: nginx* 
+  become: yes
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Amazon'
+
+
 - name: -Prereqs- Install EPEL repo (required to install python-pip)
   yum:
     name: epel-release
@@ -38,14 +53,21 @@
   become: yes    
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'    
 
-
-- name: -Prereqs- Install Splunk Phantom prereq packages
+- name: -Prereqs- Seperate task to ensure that python-pip is installed regardless of version
   yum:
     name: "{{ packages }}"
   vars:
     packages:
     - python-setuptools
     - python-pip
+    - 
+  become: yes
+
+- name: -Prereqs- Install Splunk Phantom prereq packages
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
     - git
     - wget
     - libevent
@@ -68,10 +90,12 @@
     - libxml2
     - libcurl
     - gnutls
-  become: yes  
+  become: yes
+  when: 
+    - phantom_version is version('5.3.0', '<')      
 
 
-- name: Check for the presence of /home/{{ os_user }}/{{ phantom_tgz }}
+- name: -Upload- Check for the presence of /home/{{ os_user }}/{{ phantom_tgz }}
   stat: 
     path: /home/{{ os_user }}/{{ phantom_tgz }}
     get_checksum: yes  
@@ -120,13 +144,51 @@
   become: yes  
 
 
-- name: -Install- Install SOAR using the phantom_tar_install.sh script unless already installed
+- name: -Prep- Run the soar-prepare-system script (>= 5.3.0 && <= 5.3.2)
   command:
-    chdir: "{{ phantom_home }}/"
+    chdir: "{{ phantom_home }}"
+    cmd: "./soar-prepare-system --splunk-soar-home {{ phantom_home }} --no-prompt --https-port {{ phantom_https_port }}"
+  become: yes
+  when:
+    - phantom_version is version('5.3.0', '>=') 
+    - phantom_version is version('5.3.2', '<=')  
+
+- name: -Prep- Run the soar-prepare-system script (>= 5.3.3)
+  command:
+    chdir: "{{ phantom_home }}/splunk-soar"
+    cmd: "./soar-prepare-system --splunk-soar-home {{ phantom_home }} --no-prompt --https-port {{ phantom_https_port }}"
+  become: yes
+  when: 
+    - phantom_version is version('5.3.3', '>=')     
+
+
+- name: -Install- Install SOAR using the phantom_tar_install.sh script unless already installed (< 5.3.0)
+  command:
+    chdir: "{{ phantom_home }}"
     cmd: "./phantom_tar_install.sh install --no-prompt --https-port={{ phantom_https_port }}"
-    creates: "{{ phantom_home }}/var/log/phantom/phantom_install_log"
   become: yes
   become_user: "{{ os_user }}"
+  when: 
+    - phantom_version is version('5.3.0', '<')  
+
+- name: -Install- Install SOAR using the soar-install script unless already installed (>= 5.3.0 && <= 5.3.2)
+  command:
+    chdir: "{{ phantom_home }}"
+    cmd: "./soar-install --splunk-soar-home {{ phantom_home }} --no-prompt --https-port={{ phantom_https_port }} --ignore-warnings"
+  become: yes
+  become_user: "{{ os_user }}"
+  when:
+    - phantom_version is version('5.3.0', '>=') 
+    - phantom_version is version('5.3.2', '<=')  
+
+- name: -Install- Install SOAR using the splunk-soar/soar-install script unless already installed (>= 5.3.3)
+  command:
+    chdir: "{{ phantom_home }}/splunk-soar"
+    cmd: "./soar-install --splunk-soar-home {{ phantom_home }} --no-prompt --https-port={{ phantom_https_port }} --ignore-warnings"
+  become: yes
+  become_user: "{{ os_user }}"
+  when: 
+    - phantom_version is version('5.3.3', '>=')  
 
 
 - name: -Admin Password- Install pexpect (prereq for next step)

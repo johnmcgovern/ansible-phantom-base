@@ -102,14 +102,24 @@
   when: 
     - phantom_version is version('5.3.0', '<')    
 
-- name: Upgrade SOAR (>=5.3.0) using the {{ phantom_home }}/soar-install script (--with-apps now required)
+- name: Upgrade SOAR (5.3.0 to 5.3.2) using the {{ phantom_home }}/soar-install script (--with-apps now required)
   command:
     chdir: "{{ phantom_home }}"
     cmd: "{{ phantom_home }}/bin/phenv {{ phantom_home }}/soar-install --upgrade --no-prompt --with-apps"
   become: yes
   become_user: "{{ os_user }}"
   when: 
-    - phantom_version is version('5.3.0', '>=')  
+    - phantom_version is version('5.3.0', '>=') 
+    - phantom_version is version('5.3.2', '<=')   
+
+- name: Upgrade SOAR (>=5.3.3) using the {{ phantom_home }}/splunk-soar/soar-install script
+  command:
+    chdir: "{{ phantom_home }}/splunk-soar"
+    cmd: "./soar-install --upgrade --no-prompt --with-apps --ignore-warnings"
+  become: yes
+  become_user: "{{ os_user }}"
+  when: 
+    - phantom_version is version('5.3.3', '>=')  
 
 - name: Run Postgres database cleanup script
   command:

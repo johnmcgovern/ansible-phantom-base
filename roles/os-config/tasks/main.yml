@@ -22,6 +22,21 @@
   become: yes
 
 
+- name: -OS Updates- Clear yum caches (note this is not supported in yum module so we have to do it in command module)
+  command:
+    cmd: "yum clean all"
+    warn: false
+  become: yes
+
+- name: -OS Updates- Check for OS package updates (excluding nginx)
+  yum:
+    name: "*"
+    state: latest 
+    exclude: nginx* 
+  become: yes
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Amazon'
+
+
 - name: -Prereqs- Install EPEL repo (required to install python-pip)
   yum:
     name: epel-release
@@ -29,13 +44,20 @@
   become: yes
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'    
 
-- name: -Prereqs- Install Splunk Phantom prereq packages
+- name: -Prereqs- Seperate task to ensure that python-pip is installed regardless of version
   yum:
     name: "{{ packages }}"
   vars:
     packages:
     - python-setuptools
     - python-pip
+  become: yes
+
+- name: -Prereqs- Install Splunk Phantom prereq packages
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
     - git
     - wget
     - libevent
@@ -58,7 +80,9 @@
     - libxml2
     - libcurl
     - gnutls
-  become: yes  
+  become: yes
+  when: 
+    - phantom_version is version('5.3.0', '<')     
 
 - name: -Prereqs- Install pexpect
   pip:
@@ -126,10 +150,3 @@
   become: yes  
   when: firewalld_flag.stat.exists == True
 
-
-- name: -RedHat & CentOS Updates-
-  yum:
-    name: "*"
-    state: latest  
-  become: yes
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Amazon'
