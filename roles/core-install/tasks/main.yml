@@ -174,7 +174,6 @@
   command:
     chdir: "{{ phantom_home }}"
     cmd: "./soar-install --splunk-soar-home {{ phantom_home }} --no-prompt --https-port={{ phantom_https_port }} --ignore-warnings"
-    ignore_errors: yes 
   become: yes
   become_user: "{{ os_user }}"
   when:
@@ -185,7 +184,6 @@
   command:
     chdir: "{{ phantom_home }}/splunk-soar"
     cmd: "./soar-install --splunk-soar-home {{ phantom_home }} --no-prompt --https-port={{ phantom_https_port }} --ignore-warnings"
-    ignore_errors: yes 
   become: yes
   become_user: "{{ os_user }}"
   when: 
