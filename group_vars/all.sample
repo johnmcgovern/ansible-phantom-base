@@ -71,9 +71,9 @@ use_custom_ssl_certs: false
 #==================================
 
 # Latest Splunk Phantom version, filename, and SHA-256 checksum (for upload)
-phantom_version: 5.3.3
-phantom_tgz: splunk_soar-unpriv-5.3.3.92213-ebef80f6-el7-x86_64.tar
-phantom_tgz_checksum: b808c4cbe30041ca84be466f78a4572d4a79e57d20dc383339554bc287ac2677
+phantom_version: 5.4.0
+phantom_tgz: splunk_soar-unpriv-5.4.0.101028-51471342-el7-x86_64.tar
+phantom_tgz_checksum: 55542a6b8d1d76ec5d971a7cf2fe7f96a7fd4f9bf11ff43fe3a8e183bcc0823b
 
 
 #===============================================================
@@ -81,7 +81,18 @@ phantom_tgz_checksum: b808c4cbe30041ca84be466f78a4572d4a79e57d20dc383339554bc287
 # (uncomment and copy to use) 
 #===============================================================
 
+# 5.4
+
+# phantom_tgz: splunk_soar-unpriv-5.4.0.101028-51471342-el7-x86_64.tar
+# phantom_tgz_checksum: 55542a6b8d1d76ec5d971a7cf2fe7f96a7fd4f9bf11ff43fe3a8e183bcc0823b
+
 # 5.3
+
+# phantom_tgz: splunk_soar-unpriv-5.3.5.97812-1ed10be4-el7-x86_64.tar
+# phantom_tgz_checksum: 1fce053fcb784b61bf516c8902eaad943028640184b7f467ade446e8d8235d41
+
+# phantom_tgz: splunk_soar-unpriv-5.3.4.95226-e7cead8c-el7-x86_64.tar
+# phantom_tgz_checksum: 2adc4d0298f61b98a095b81689d0e667fcc42772c185e6cda5d47d8a05c43c57
 
 # phantom_tgz: splunk_soar-unpriv-5.3.3.92213-ebef80f6-el7-x86_64.tar
 # phantom_tgz_checksum: b808c4cbe30041ca84be466f78a4572d4a79e57d20dc383339554bc287ac2677
