@@ -71,15 +71,20 @@ use_custom_ssl_certs: false
 #==================================
 
 # Latest Splunk Phantom version, filename, and SHA-256 checksum (for upload)
-phantom_version: 5.5.0
-phantom_tgz: splunk_soar-unpriv-5.5.0.108488-3ac4a627-el7-x86_64.tar
-phantom_tgz_checksum: a0eb43b7ed3d82fb7e2b791a95ec3a8e30e4494ae9468631fe282c86c5515c39
+phantom_version: 6.0.0
+phantom_tgz: splunk_soar-unpriv-6.0.0.114895-cb859067-el7-x86_64.tar
+phantom_tgz_checksum: 622c3e3079e97a7128606104b9f66caa9c8550edf14a2551223ff6c6ed70aeed
 
 
 #===============================================================
 # Splunk Phantom Version Library 
 # (uncomment and copy to use) 
 #===============================================================
+
+# 6.0
+
+# phantom_tgz: splunk_soar-unpriv-6.0.0.114895-cb859067-el7-x86_64.tar
+# phantom_tgz_checksum: 622c3e3079e97a7128606104b9f66caa9c8550edf14a2551223ff6c6ed70aeed
 
 # 5.5
 
